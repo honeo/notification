@@ -3,7 +3,7 @@
 [notification-wrapper](https://www.npmjs.com/package/notification-wrapper)
 
 ## なにこれ
-かんたんなNotification APIのラッパー。  
+かんたんNotification API。  
 通知したい内容を渡すと許可を取ってタイミングを合わせて通知を出す。  
 Promiseインスタンスを返す。
 
