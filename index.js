@@ -1,11 +1,6 @@
-/*
-	かんたんなNotification APIラッパー
-		通知内容を投げるとPromiseインスタンスが返る
-		勝手に許可を取る
-		勝手に通知を一定間隔で表示する
-		出しっぱなしオプションは非対応
-		webkit,mozNotificationは中身が別モンだからしらんがな
-*/
+// Modules
+import {is, not, any} from '@honeo/check';
+
 
 /*
 	どの設定もNotification APIからは取得・変更できない。
@@ -17,8 +12,8 @@
 */
 const limit = 3; //同時表示数
 let count = 0; //現在の表示数
-const interval = 500; //通知の表示間隔、カレントウィンドウ以外だとsetTimeoutの実行が遅延されるからアテにはならない
-const timeout = 6000; //通知の表示時間
+const ms_interval = 500; //通知の表示間隔、カレントウィンドウ以外だとsetTimeoutの実行が遅延されるからアテにはならない
+const ms_timeout = 6000; //通知の表示時間
 
 /*
 	本体
@@ -33,23 +28,26 @@ const timeout = 6000; //通知の表示時間
 		廃止予定のclose,showは同タイミングでcallbackを手動実行
 */
 function NotificationWrapper(title, option={}){
+
 	// 引数チェック、文字列＆オブジェクト以外はNG
-	if(typeof title!=='string' || !(option instanceof Object)){
-		return Promise.reject(new TypeError('invalid argument'));
+	if( not.str(title) || not.obj(option) ){
+		return Promise.reject(new TypeError('Invalid arguments'));
 	}
+
 	// こっちで制御するからタグをカット
 	delete option.tag;
+
 	// Promise
 	return new Promise( (resolve, reject)=>{
-		typeof window.Notification==='function' ?
+		is.func(window.Notification) ?
 			resolve():
-			reject(Error('window.Notification not found'));
+			reject(new Error('Notification API not found'));
 	}).then( ()=>{
 		return Notification.permission==='granted' || new Promise( (resolve, reject)=>{
 			Notification.requestPermission( (result)=>{
 				result==='granted' ?
 					resolve():
-					reject(Error(`permission: ${result}`));
+					reject(new Error(`permission: ${result}`));
 			});
 		});
 	}).then( ()=>{
@@ -57,23 +55,24 @@ function NotificationWrapper(title, option={}){
 			sync(function(){
 				count++;
 				const notification = new Notification(title, option);
-				typeof option.onshow==='function' && option.onshow.call(notification);
-				typeof option.onclick==='function' && notification.addEventListener('click', option.onclick, false);
+				is.func(otion.onshow) && option.onshow.call(notification);
+				is.func(option.onclick) && notification.addEventListener('click', option.onclick, false);
 				setTimeout(function(){
 					count--;
 					notification.close();
 					sync();
-					typeof option.onclose==='function' && option.onclose.call(notification);
+					is.func(option.onclose) && option.onclose.call(notification);
 					resolve();
-				}, timeout);
+				}, ms_timeout);
 				notification.addEventListener('error', function(e){
-					typeof option.onerror==='function' && option.onerror.call(this, e);
+					is.func(option.onerror) && option.onerror.call(this, e);
 					reject(e);
 				}, false);
 			});
 		});
 	});
 }
+
 
 /*
 	一定間隔で通知を出すぞい
@@ -87,7 +86,7 @@ let sync = do{
 		while(stack.length && count<limit){
 			await new Promise( (resolve, reject)=>{
 				stack.shift()();
-				setTimeout(resolve, interval);
+				setTimeout(resolve, ms_interval);
 			});
 		}
 		status = true;

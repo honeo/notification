@@ -1,6 +1,6 @@
 # notification-wrapper
-[honeo/notification-wrapper](https://github.com/honeo/notification-wrapper)  
-[notification-wrapper](https://www.npmjs.com/package/notification-wrapper)
+* [honeo/notification-wrapper](https://github.com/honeo/notification-wrapper)  
+* [notification-wrapper](https://www.npmjs.com/package/notification-wrapper)
 
 ## なにこれ
 かんたんNotification API。  
@@ -9,18 +9,19 @@ Promiseインスタンスを返す。
 
 ## 使い方
 ```sh
-$ npm i -S notification-wrapper
+$ npm i notification-wrapper
 ```
 ```js
-import NotificationWrapper from 'notification-wrapper';
+import Notification from 'notification-wrapper';
 
-NotificationWrapper('title', {
+// example
+Notification('title', {
 	body: 'message',
 });
-```
-あるいは
-```js
-NotificationWrapper('title', {
+
+
+// example 2
+Notification('title', {
 	body: 'message',
 	icon: 'picture.png',
 	onclick(){

@@ -35,5 +35,7 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@honeo/check": "^1.0.2"
+  }
 }
