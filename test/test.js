@@ -8,7 +8,13 @@ const path = require('path');
 
 
 const config = {
-	entry: './index.js',
+	entry: {
+		app: [
+			"webpack-dev-server/client?http://localhost:8080/",
+			"webpack/hot/dev-server",
+			'./index.js'
+		]
+	},
 	output: {
 		path: __dirname,
 		filename: 'bundle_index.js'

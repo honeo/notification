@@ -2,7 +2,7 @@
   "name": "notification-wrapper",
   "version": "1.0.2",
   "description": "honeo",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "test": "cd test && node test.js"
   },
