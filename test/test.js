@@ -4,35 +4,37 @@ console.log('notification-wrapper: test');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
 const opener = require('opener');
+const path = require('path');
+
 
 const config = {
-	entry: {
-		app: [
-			"webpack-dev-server/client?http://localhost:8080/",
-			"webpack/hot/dev-server",
-			'./index.js'
-		]
-	},
+	entry: './index.js',
 	output: {
 		path: __dirname,
 		filename: 'bundle_index.js'
 	},
-	module: {
-		loaders: [{
-			test: /\.js$/,
-			loader: 'babel-loader',
-			query: {
-				presets: [
-					"babel-preset-es2015",
-					"babel-preset-stage-0"
-				]
-			},
-			exclude: /node_modules/
-		}]
-	},
 	plugins: [
 		new webpack.HotModuleReplacementPlugin(), //hotの依存
-	]
+	],
+
+	module: {
+		rules: [{
+            test: /\.(js|mjs)$/,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: [
+						["env", {
+							modules: false
+						}],
+						'stage-0'
+					]
+                }
+            }
+        }]
+	},
+
+	mode: 'development'
 }
 
 const instance = webpack(config);
